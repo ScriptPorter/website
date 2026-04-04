@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download ScriptPorter</title>
+    
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+
+    <style>
+        :root {
+            --bg-deep: #05080f;
+            --bg-surface: #101622;
+            --accent: #135bec;
+            --accent-glow: rgba(19, 91, 236, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1; 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 8, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10rem 5% 6rem;
+            background: radial-gradient(circle at 50% 30%, #152238 0%, var(--bg-deep) 70%);
+            position: relative;
+        }
+
+        /* Download Hero Section */
+        .download-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .download-header h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .download-header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(19, 91, 236, 0.15);
+            color: #63a0ff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(19, 91, 236, 0.4);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Big Download Button */
+        .btn-massive {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--text-main);
+            color: var(--bg-deep) !important;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-massive:hover {
+            background: var(--accent);
+            color: var(--text-main) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+            animation: none;
+        }
+
+        .btn-massive svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* System Requirements Card */
+        .sys-req-card {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .sys-req-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .req-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .req-col h3 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .req-item {
+            margin-bottom: 1.2rem;
+        }
+
+        .req-item span {
+            display: block;
+            font-size: 0.9rem;
+            color: #8a99af;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.2rem;
+        }
+
+        .req-item p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--bg-surface);
+            width: 100%;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .req-grid { grid-template-columns: 1fr; }
+            .download-header h1 { font-size: 3rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">ScriptPorter</a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="Documentation.pdf" target="_blank">Learn Unilang</a>
+            <a href="index.html#donate">Donate</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="download-header">
+            <div class="version-badge">Version 1.0.0 (Stable)</div>
+            <h1>Download ScriptPorter</h1>
+            
+            <div style="margin-top: 3rem;">
+                <a href="ScriptPorter_setup_x64.exe" class="btn-massive" download>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Download for Windows
+                </a>
+            </div>
+        </div>
+
+        <div class="sys-req-card">
+            <h2>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                System Requirements
+            </h2>
+            <div class="req-grid">
+                <div class="req-col">
+                    <h3>Minimum</h3>
+                    <div class="req-item">
+                        <span>OS</span>
+                        <p>Windows 10 / 11 (64-bit)</p>
+                    </div>
+                    <div class="req-item">
+                        <span>Processor</span>
+                        <p>1 GHz dual-core processor</p>
+                    </div>
+                    <div class="req-item">
+                        <span>Memory</span>
+                        <p>At least 1 GB RAM</p>
+                    </div>
+                    <div class="req-item">
+                        <span>Storage</span>
+                        <p>250 MB available space</p>
+                    </div>
+                </div>
+                
+                <div class="req-col">
+                    <h3>Recommended</h3>
+                    <div class="req-item">
+                        <span>OS</span>
+                        <p>Windows 10 / 11 (64-bit)</p>
+                    </div>
+                    <div class="req-item">
+                        <span>Processor</span>
+                        <p>2.0 GHz multi-core processor or faster</p>
+                    </div>
+                    <div class="req-item">
+                        <span>Memory</span>
+                        <p>4 GB RAM or higher</p>
+                    </div>
+                    <div class="req-item">
+                        <span>Storage</span>
+                        <p>1 GB SSD available space</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>copyright &copy; 2026 ScriptPorter.<br>Created by Abin Tom, Abin Cheriyan, Alex Thomas.</p>
+    </footer>
+
+</body>
+</html>
