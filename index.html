@@ -1,13 +1,1217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ScriptPorter-The Linguist</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptPorter : The Ultimate Translator</title>
+    
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+
+    <style>
+        :root {
+            --bg-deep: #05080f;
+            --bg-surface: #101622;
+            --accent: #135bec;
+            --accent-glow: rgba(19, 91, 236, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1; 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body.loading, body.menu-open, body.modal-open {
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* =========================================
+           Diamond Animation + Progress Bar Loader
+           ========================================= */
+        #loader-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: var(--bg-deep); 
+            background-image: 
+                radial-gradient(circle at center, rgba(19, 91, 236, 0.1) 0%, transparent 50%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            background-position: center center;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease-in-out, visibility 0.6s;
+        }
+
+        #loader-splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .diamond-loader-wrapper {
+            position: relative;
+            width: 250px; 
+            height: 250px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .diamond-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            overflow: visible; 
+            animation: diamondRotateScale 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .diamond-half {
+            filter: drop-shadow(0 0 8px var(--accent));
+        }
+
+        .diamond-half.left {
+            animation: slideDiamondLeft 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .diamond-half.right {
+            animation: slideDiamondRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes slideDiamondLeft {
+            0% { transform: translateX(-60px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideDiamondRight {
+            0% { transform: translateX(60px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes diamondRotateScale {
+            0%, 35% { transform: scale(0.9) rotate(0deg); opacity: 1; stroke: #135bec; }
+            50% { transform: scale(1.1) rotate(90deg); filter: drop-shadow(0 0 20px #63a0ff); opacity: 1; stroke: #ffffff; }
+            80% { transform: scale(1.8) rotate(90deg); opacity: 0; stroke: #135bec; }
+            100% { transform: scale(1.8) rotate(90deg); opacity: 0; }
+        }
+
+        .diamond-spark {
+            position: absolute;
+            width: 10px; 
+            height: 10px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 30px 15px var(--accent);
+            opacity: 0;
+            z-index: 4;
+            animation: sparkFlash 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes sparkFlash {
+            0%, 31% { transform: scale(0); opacity: 0; }
+            34% { transform: scale(1); opacity: 1; } 
+            55% { transform: scale(4); opacity: 0; } 
+            100% { opacity: 0; }
+        }
+
+        .diamond-logo {
+            position: absolute;
+            width: 160px; 
+            height: auto;
+            z-index: 2;
+            opacity: 0;
+            animation: revealLogo 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes revealLogo {
+            0%, 40% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
+            60% { transform: scale(1.1); opacity: 1; filter: blur(0px) drop-shadow(0 0 20px rgba(19, 91, 236, 0.6)); }
+            100% { transform: scale(1); opacity: 1; filter: blur(0px) drop-shadow(0 0 0px transparent); }
+        }
+
+        .loader-bar-container {
+            width: 300px; 
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            margin-top: -20px; 
+        }
+
+        .loader-bar-container::after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            left: 50%;
+            height: 100%;
+            width: 0;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);
+            transform: translateX(-50%);
+            animation: expandBar 2.4s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes expandBar {
+            0% { width: 0; opacity: 0; }
+            30% { opacity: 1; }
+            90% { width: 100%; opacity: 1; }
+            100% { width: 100%; opacity: 0; } 
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 8, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 2000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 28px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+            z-index: 2001;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: var(--text-main);
+            border-radius: 3px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: 0.3s ease-in-out;
+        }
+
+        .menu-toggle span:nth-child(1) { top: 0px; }
+        .menu-toggle span:nth-child(2) { top: 8px; }
+        .menu-toggle span:nth-child(3) { top: 16px; }
+
+        .menu-toggle.active span:nth-child(1) { top: 8px; transform: rotate(135deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; left: -20px; }
+        .menu-toggle.active span:nth-child(3) { top: 8px; transform: rotate(-135deg); }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover { color: var(--text-main); }
+
+        .btn-download {
+            display: inline-block;
+            background: var(--text-main);
+            color: var(--bg-deep) !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-decoration: none; 
+            transition: all 0.3s ease;
+        }
+
+        .btn-download:hover {
+            background: var(--accent);
+            color: var(--text-main) !important;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 8, 15, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        .mobile-nav-overlay.active { opacity: 1; visibility: visible; }
+        .mobile-nav-overlay a { color: var(--text-main); font-size: 1.8rem; font-weight: 600; text-decoration: none; transition: color 0.3s, transform 0.3s; cursor: pointer; }
+        .mobile-nav-overlay a:hover { color: var(--accent); transform: scale(1.1); }
+        .mobile-nav-overlay .btn-download { margin-top: 1rem; font-size: 1.3rem; padding: 0.8rem 2.5rem; }
+
+        /* =========================================
+           DONATION POP-UP MODAL
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(5, 8, 15, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-box {
+            background: var(--bg-surface);
+            padding: 3rem 2.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            transform: translateY(30px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: floatHeart 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .modal-box h3 { color: var(--text-main); font-size: 1.6rem; margin-bottom: 1rem; line-height: 1.3; }
+        .modal-box p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1.05rem; line-height: 1.6; }
+        .modal-box strong { color: var(--text-main); }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .btn-proceed {
+            background: var(--accent);
+            color: var(--text-main);
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-proceed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        /* Base Section Style */
+        section {
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 10%;
+            position: relative;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            align-items: center;
+            background: radial-gradient(circle at 50% 30%, #152238 0%, var(--bg-deep) 70%);
+            isolation: isolate; 
+            padding-top: 10rem;
+            min-height: 100vh;
+        }
+
+        .hero-logo {
+            width: 700px;
+            max-width: 90vw; 
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 25px rgba(19, 91, 236, 0.6)); 
+        }
+
+        .hero-badge {
+            background: rgba(19, 91, 236, 0.2);
+            color: #63a0ff;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(19, 91, 236, 0.4);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 750px;
+            margin-bottom: 3rem;
+        }
+
+        /* Showcases */
+        .showcase {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4rem;
+            padding: 8rem 10%;
+        }
+
+        .showcase.reverse { flex-direction: row-reverse; }
+        .showcase-content { flex: 1; }
+        .showcase-content h2 { font-size: 2.8rem; margin-bottom: 1.5rem; line-height: 1.2; }
+        .showcase-content p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2rem; }
+
+        .showcase-visual {
+            flex: 1;
+            height: 400px;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .showcase-visual::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: var(--accent);
+            filter: blur(100px);
+            opacity: 0.35;
+            z-index: -1;
+        }
+
+        /* NEW RULE: Ensures images resize to fit perfectly inside without cropping */
+        .showcase-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Changed from cover to contain */
+            padding: 1.5rem; /* Adds nice space around the image so it doesn't touch the borders */
+            border-radius: 11px; 
+            position: relative;
+            z-index: 1; 
+        }
+
+        /* How It Works Grid */
+        .how-it-works {
+            text-align: center;
+            background: var(--bg-surface);
+            padding: 8rem 10%;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .how-it-works h2 { font-size: 2.8rem; margin-bottom: 3rem; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-top: 3rem; }
+        .step-card { text-align: left; position: relative; }
+        .step-number { font-size: 6rem; font-weight: 900; color: rgba(99, 160, 255, 0.4); position: absolute; top: -50px; left: -15px; z-index: 0; }
+        .step-card h3 { font-size: 1.5rem; margin-bottom: 1rem; position: relative; z-index: 1; }
+        .step-card p { color: var(--text-muted); position: relative; z-index: 1; }
+
+        /* Feature Carousel Grid Stack */
+        .feature-carousel-section {
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(19, 91, 236, 0.08) 0%, var(--bg-deep) 70%);
+            padding: 8rem 10%;
+        }
+
+        .feature-carousel-section h2 { font-size: 2.8rem; margin-bottom: 1.5rem; }
+
+        .carousel-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid; 
+            grid-template-areas: "stack"; 
+            touch-action: pan-y; 
+            cursor: grab;
+        }
+        
+        .carousel-container:active { cursor: grabbing; }
+
+        .carousel-slide {
+            grid-area: stack;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border-color: rgba(19, 91, 236, 0.4);
+            z-index: 2; 
+        }
+
+        .carousel-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+        .carousel-slide h3 { font-size: 1.8rem; margin-bottom: 1rem; }
+        .carousel-slide p { color: var(--text-muted); max-width: 600px; }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 3rem;
+        }
+
+        .dot {
+            cursor: pointer;
+            height: 12px;
+            width: 12px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active, .dot:hover { background-color: var(--accent); transform: scale(1.4); }
+
+        /* Target Audience Section */
+        .audience-section { padding: 8rem 10%; text-align: center; }
+        .audience-section h2 { font-size: 2.8rem; margin-bottom: 3rem; }
+        .audience-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+
+        .audience-card {
+            background: var(--bg-surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border-top: 3px solid var(--accent);
+            text-align: left;
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .audience-card h3 { font-size: 1.3rem; margin-bottom: 1rem; color: var(--text-main); }
+        .audience-card p { color: var(--text-muted); font-size: 1rem; }
+
+        /* Logo Marquee Section */
+        .marquee-section { padding: 6rem 0; text-align: center; overflow: hidden; background: var(--bg-surface); }
+        .marquee-section h2 { font-size: 2.8rem; margin-bottom: 1.5rem; }
+        .marquee-section p { color: var(--text-muted); margin-bottom: 4rem; }
+
+        .marquee-container { width: 100vw; overflow: hidden; position: relative; }
+        .marquee-container::before, .marquee-container::after { content: ''; position: absolute; top: 0; width: 150px; height: 100%; z-index: 2; pointer-events: none; }
+        .marquee-container::before { left: 0; background: linear-gradient(to right, var(--bg-surface) 0%, transparent 100%); }
+        .marquee-container::after { right: 0; background: linear-gradient(to left, var(--bg-surface) 0%, transparent 100%); }
+        .marquee-track { display: flex; gap: 2rem; width: max-content; animation: scroll-left 35s linear infinite; }
+        .marquee-track:hover { animation-play-state: paused; }
+
+        .marquee-card {
+            width: 220px;
+            height: 220px;
+            background: var(--bg-deep);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .marquee-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .marquee-card img { width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        .marquee-card h3 { color: var(--text-main); font-size: 1.2rem; margin: 0; }
+
+        @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* FAQ Section */
+        .faq-section { padding: 8rem 10%; max-width: 900px; margin: 0 auto; }
+        .faq-section h2 { text-align: center; font-size: 2.8rem; margin-bottom: 3rem; }
+        details { background: var(--bg-surface); margin-bottom: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        summary { padding: 1.5rem; font-size: 1.2rem; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '+'; color: var(--accent); font-size: 1.5rem; }
+        details[open] summary::after { content: '-'; }
+        details p { padding: 0 1.5rem 1.5rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 1rem; padding-top: 1rem; }
+
+        /* About Section */
+        .about-section { padding: 8rem 10%; text-align: center; background: radial-gradient(circle at top, rgba(19, 91, 236, 0.05) 0%, var(--bg-deep) 70%); border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .about-section h2 { font-size: 2.8rem; margin-bottom: 2rem; }
+        .about-section p { font-size: 1.2rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.8; }
+        .dev-team { display: flex; justify-content: center; gap: 2.5rem; margin-top: 4rem; flex-wrap: wrap; }
+        
+        .dev-profile {
+            background: var(--bg-surface);
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 220px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .dev-profile:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .dev-profile h4 { color: var(--text-main); font-size: 1.3rem; margin-bottom: 0.5rem; }
+        .dev-profile span { color: var(--accent); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Animation & Footer */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        footer { text-align: center; padding: 4rem 2rem; color: var(--text-muted); border-top: 1px solid rgba(255, 255, 255, 0.1); background: var(--bg-surface); }
+        
+        /* Social Links */
+        .social-links { 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap;
+            gap: 2.5rem; 
+            margin-bottom: 2rem; 
+        }
+        .social-link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .social-icon { 
+            fill: currentColor; 
+            width: 24px; 
+            height: 24px; 
+            transition: transform 0.3s ease, filter 0.3s ease; 
+        }
+        .social-link-item:hover { color: var(--accent); }
+        .social-link-item:hover .social-icon { transform: translateY(-4px); filter: drop-shadow(0 4px 8px rgba(19, 91, 236, 0.4)); }
+
+        .action-link { color: var(--accent); text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.3s; }
+        .action-link:hover { border-bottom-color: var(--accent); }
+
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 3rem; }
+            .showcase, .showcase.reverse { flex-direction: column; text-align: center; }
+            .nav-links { display: none !important; }
+            .menu-toggle { display: block !important; }
+            .social-links { gap: 1.5rem; flex-direction: column; align-items: center; }
+        }
+    </style>
 </head>
-<body>
-      <center><h1>Website Under Maintenance</h1></center>
+<body class="loading">
+
+    <div id="loader-splash">
+        <div class="loader-content">
+            <div class="diamond-loader-wrapper">
+                <svg class="diamond-svg" viewBox="0 0 100 100">
+                    <path class="diamond-half left" d="M 50 4 L 4 50 L 50 96" fill="none" stroke="#135bec" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="diamond-half right" d="M 50 4 L 96 50 L 50 96" fill="none" stroke="#135bec" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="diamond-spark"></div>
+                <img src="logo.png" alt="Loading ScriptPorter" class="diamond-logo">
+            </div>
+            <div class="loader-bar-container"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="donate-modal">
+        <div class="modal-box">
+            <div class="modal-icon">❤️</div>
+            <h3>Thank you for your generosity!</h3>
+            <p>ScriptPorter is 100% free and we do not accept donations for ourselves.</p>
+            <p>However, if you would like to support a great cause, we encourage you to donate to the <strong>International Rescue Committee (IRC)</strong> to help families affected by crises around the world.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="close-modal">Maybe Later</button>
+                <a href="https://help.rescue.org/donate" target="_blank" class="btn-proceed" id="proceed-donate">Proceed to IRC</a>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <a href="#" class="logo">ScriptPorter</a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="#about">About</a>
+            <a href="Documentation.pdf" target="_blank">Learn Unilang</a>
+            <a href="#donate" class="donate-trigger">Donate</a>
+            <a href="download.html" class="btn-download">Download Now</a>
+        </nav>
+    </header>
+
+    <div class="mobile-nav-overlay" id="mobile-nav">
+        <a href="#about" class="mobile-link">About</a>
+        <a href="Documentation.pdf" target="_blank" class="mobile-link">Learn Unilang</a>
+        <a href="#donate" class="mobile-link donate-trigger">Donate</a>
+        <a href="download.html" class="mobile-link btn-download">Download Free</a>
+    </div>
+
+    <section class="hero reveal">
+        <img src="logo.png" alt="ScriptPorter Engine" class="hero-logo" onerror="this.style.display='none'">
+        
+        <div class="hero-badge">THE ULTIMATE TRANSPILER</div>
+        <h1>Logic First.<br>Code Second.</h1>
+        <p>ScriptPorter is an ultimate multi-language transpiler, that works completely offline. It defines Unilang, a programming language with an easy to learn syntax. Write your application logic once in Unilang and instantly generate production-ready code for 10 different programming environments.</p>
+
+        <div style="margin-top: 2rem;">
+            <a href="download.html" class="btn-download" style="padding: 1rem 2.5rem; font-size: 1.1rem; margin-right: 1rem;">Get ScriptPorter V 1.0</a>
+        </div>
+    </section>
+
+    <section class="showcase reverse reveal">
+        <div class="showcase-content">
+            <h2>The Power of Unilang</h2>
+            <p>Unilang is a clean, easy-to-read programming language designed specifically for expressing pure logic and algorithms,making it exceptionally easy to learn and understand. Rather than running as an executable program on its own, it acts as a universal blueprint for your software's core rules.
+By drafting your ideas in Unilang's straightforward, pseudocode-like format, you can focus entirely on problem-solving and structuring data without getting distracted by complex formatting rules. 
+Once your blueprint is complete, the ScriptPorter engine simply reads it and translates your concepts into the exact, ready-to-use code in the target language
+</p>
+            <a href="Documentation.pdf" target="_blank" class="action-link">Read the Unilang Documentation →</a>
+        </div>
+        <div class="showcase-visual">
+            <img src="1.jpg" alt="Unilang Editor Screenshot">
+        </div>
+    </section>
+
+    <section class="showcase reveal">
+        <div class="showcase-content">
+            <h2>Supports industry-leading languages</h2>
+            <p>ScriptPorter seamlessly translates your Unilang code into the industry's most popular programming languages such as Python, Java, JavaScript,etc. Supports 10 programming languages</p>
+        </div>
+        <div class="showcase-visual">
+            <img src="2.jpg" alt="Supported Languages">
+        </div>
+    </section>
+
+    <section class="how-it-works reveal">
+        <h2>How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <h3>Draft in Unilang</h3>
+                <p>Write your core algorithms in our custom DSL, Unilang. It feels just like writing intuitive pseudocode, stripping away the friction of standard syntax.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <h3>Select Target Environment</h3>
+                <p>Choose from 10 supported high-level languages, from backend architectures like PHP and Java to scripting environments like Lua and Python.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <h3>Generate Native Source Code</h3>
+                <p>The engine processes your Unilang blueprint to generate clean, production-ready code for your target environment.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="feature-carousel-section reveal">
+        <h2>Engineered for Excellence</h2>
+        
+        
+        <div class="carousel-container" id="swipe-container">
+            <div class="carousel-slide active">
+                <div class="carousel-icon">⚡</div>
+                <h3>Real-Time Translation</h3>
+                <p>No waiting for loaders. As you type Unilang code on the left, the engine instantly generates the target language on the right with zero lag.</p>
+            </div>
+            <div class="carousel-slide">
+                <div class="carousel-icon">🚀</div>
+                <h3>High Performance Engine</h3>
+                <p>Powered by the .NET runtime, ScriptPorter engine translates thousands of lines per second without breaking a sweat.</p>
+            </div>
+            <div class="carousel-slide">
+                <div class="carousel-icon">🛡️</div>
+                <h3>Live Syntax Validation</h3>
+                <p>Syntax errors and lexical faults are caught in real-time. Built-in listeners highlight your mistakes instantly, ensuring only valid logic is compiled.</p>
+            </div>
+            <div class="carousel-slide">
+                <div class="carousel-icon">📦</div>
+                <h3>Self-Contained Executable</h3>
+                <p>No external dependencies or frameworks to install. Everything you need is packed into a single, highly optimized desktop executable.</p>
+            </div>
+        </div>
+        
+        <div class="carousel-dots">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+        </div>
+    </section>
+
+    <section class="showcase reverse reveal">
+        <div class="showcase-content">
+            <h2>100% Offline.<br>Zero Dependencies.<br>Total Privacy</h2>
+            <p>Your code is your property. Unlike cloud-based AI tools, ScriptPorter operates entirely on your local machine. 
+                No internet connection required, Zero cloud processing, No API calls, and absolute security for your proprietary logic.
+            </p>
+        </div>
+        <div class="showcase-visual">
+             <img src="4.jpg" alt="Offline Capabilities">
+        </div>
+    </section>
+
+    <section class="audience-section reveal">
+        <h2>Who uses ScriptPorter?</h2>
+        <div class="audience-grid">
+            <div class="audience-card">
+                <h3>🎓 Educational Institutions</h3>
+                <p>Perfect for teaching algorithmic thinking and data structures without students getting bottlenecked by the strict syntax rules of programming languages.</p>
+            </div>
+            <div class="audience-card">
+                <h3>💻 Algorithm Designers</h3>
+                <p>Draft complex, universal algorithms in Unilang once, and instantly convert them to multiple target languages to benchmark performance.</p>
+            </div>
+            <div class="audience-card">
+                <h3>📱 Cross-Platform Devs</h3>
+                <p>Write your core business logic once, export to Dart for your Flutter app, Kotlin for Android, and PHP for your server.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="marquee-section reveal">
+        <h2>10 Target Languages.</h2>
+        <p>Instantly map your logic to industry-standard languages.</p>
+        
+        <div class="marquee-container">
+            <div class="marquee-track">
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python Logo">
+                    <h3>Python</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" alt="Java Logo">
+                    <h3>Java</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript Logo">
+                    <h3>JavaScript</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" alt="PHP Logo">
+                    <h3>PHP</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" alt="Kotlin Logo">
+                    <h3>Kotlin</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg" alt="C# Logo">
+                    <h3>C#</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg" alt="Dart Logo">
+                    <h3>Dart</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/groovy/groovy-original.svg" alt="Groovy Logo">
+                    <h3>Groovy</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/lua/lua-original.svg" alt="Lua Logo">
+                    <h3>Lua</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg" alt="Ruby Logo">
+                    <h3>Ruby</h3>
+                </div>
+
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python Logo">
+                    <h3>Python</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" alt="Java Logo">
+                    <h3>Java</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript Logo">
+                    <h3>JavaScript</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" alt="PHP Logo">
+                    <h3>PHP</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" alt="Kotlin Logo">
+                    <h3>Kotlin</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg" alt="C# Logo">
+                    <h3>C#</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg" alt="Dart Logo">
+                    <h3>Dart</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/groovy/groovy-original.svg" alt="Groovy Logo">
+                    <h3>Groovy</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/lua/lua-original.svg" alt="Lua Logo">
+                    <h3>Lua</h3>
+                </div>
+                <div class="marquee-card">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg" alt="Ruby Logo">
+                    <h3>Ruby</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section reveal">
+        <h2>Frequently Asked Questions</h2>
+        
+        <details>
+            <summary>How does a "Transpiler" differ from a Compiler?</summary>
+            <p>A standard compiler translates high-level code into low-level machine code or bytecode. A transpiler (source-to-source compiler) translates code from one high-level language into another. ScriptPorter takes Unilang source code and outputs valid syntax for languages like Python or Java.</p>
+        </details>
+        
+        <details>
+            <summary>Is Unilang an executable programming language?</summary>
+            <p>No. Unilang is a Domain-Specific Language (DSL) built purely as an intermediate step. It acts as a universal logic blueprint. You draft your algorithm in Unilang, and then use ScriptPorter to generate the actual executable code for your target environment.</p>
+        </details>
+        
+        <details>
+            <summary>Do I need an internet connection?</summary>
+            <p>Not at all. ScriptPorter is 100% offline. The translation engine, lexer, and parser are completely self-contained within the .NET desktop application. You can transpile scripts forever while completely offline.</p>
+        </details>
+
+        <details>
+            <summary>What operating systems are supported?</summary>
+            <p>ScriptPorter version 1 supports windows 10 and 11 64-bit edition</p>
+        </details>
+    </section>
+
+    <section id="about" class="about-section reveal">
+        <h2>About ScriptPorter</h2>
+        <p>ScriptPorter was born from a simple idea: developers shouldn't have to rewrite the same core logic every time they switch to a new framework. Our mission is to bridge the gap between abstract logic and platform-specific syntax, creating a universal standard for cross-platform program design.</p>
+        <br><br>
+        <h2>Developers</h2>
+        <div class="dev-team">
+            <div class="dev-profile">
+                <h4>Abin Tom</h4>
+            </div>
+            <div class="dev-profile">
+                <h4>Abin Cheriyan</h4>
+            </div>
+            <div class="dev-profile">
+                <h4>Alex Thomas</h4>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="social-links">
+            <a href="mailto:scriptporter@gmail.com" title="Gmail" target="_blank" class="social-link-item">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 18H4V8L12 13L20 8V18ZM12 11L4 6H20L12 11Z"/></svg>
+                <span>scriptporter@gmail.com</span>
+            </a>
+            <a href="https://x.com/ScriptPorter" title="X (Twitter)" target="_blank" class="social-link-item">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <span>ScriptPorter</span>
+            </a>
+            <a href="https://www.instagram.com/scriptporter" title="Instagram" target="_blank" class="social-link-item">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                <span>scriptporter</span>
+            </a>
+            <a href="https://www.youtube.com/@ScriptPorter" title="YouTube" target="_blank" class="social-link-item">
+                <svg class="social-icon" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <span>ScriptPorter</span>
+            </a>
+        </div>
+        <p>copyright &copy; 2026 ScriptPorter.<br> Created by Abin Tom, Abin Cheriyan, Alex Thomas.</p>
+    </footer>
+
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const loaderSplash = document.getElementById('loader-splash');
+
+            function hideSplash() {
+                loaderSplash.classList.add('hidden');
+                document.body.classList.remove('loading');
+                reveal();
+                
+                setTimeout(() => {
+                    loaderSplash.style.display = 'none';
+                }, 800); 
+            }
+
+            setTimeout(hideSplash, 2500);
+
+            // ==========================================
+            // MOBILE MENU TOGGLE LOGIC
+            // ==========================================
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileNav = document.getElementById('mobile-nav');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            menuBtn.addEventListener('click', () => {
+                menuBtn.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+                
+                if (mobileNav.classList.contains('active')) {
+                    document.body.classList.add('menu-open');
+                } else {
+                    document.body.classList.remove('menu-open');
+                }
+            });
+
+            // Close mobile menu when links are clicked (except the donate trigger)
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // Prevent closing immediately if it's the donate link so the modal handles it
+                    if(!link.classList.contains('donate-trigger')) {
+                        menuBtn.classList.remove('active');
+                        mobileNav.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    }
+                });
+            });
+
+            // ==========================================
+            // DONATE MODAL LOGIC
+            // ==========================================
+            const donateTriggers = document.querySelectorAll('.donate-trigger');
+            const donateModal = document.getElementById('donate-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const proceedDonateBtn = document.getElementById('proceed-donate');
+
+            function openModal(e) {
+                e.preventDefault();
+                donateModal.classList.add('active');
+                document.body.classList.add('modal-open');
+
+                // If mobile menu is open, close it cleanly behind the modal
+                if(mobileNav.classList.contains('active')) {
+                    menuBtn.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            }
+
+            function closeModal() {
+                donateModal.classList.remove('active');
+                document.body.classList.remove('modal-open');
+            }
+
+            donateTriggers.forEach(trigger => {
+                trigger.addEventListener('click', openModal);
+            });
+
+            closeModalBtn.addEventListener('click', closeModal);
+            proceedDonateBtn.addEventListener('click', closeModal);
+
+            // Close modal if user clicks the dark overlay background
+            donateModal.addEventListener('click', (e) => {
+                if (e.target === donateModal) {
+                    closeModal();
+                }
+            });
+        });
+
+        // Scroll Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); 
+
+        // Carousel logic & Swipe functionality
+        let slideIndex = 1;
+        let slideInterval;
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("carousel-slide");
+            let dots = document.getElementsByClassName("dot");
+            if (n > slides.length) {slideIndex = 1}    
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) { slides[i].classList.remove("active"); }
+            for (i = 0; i < dots.length; i++) { dots[i].classList.remove("active"); }
+            slides[slideIndex-1].classList.add("active");  
+            dots[slideIndex-1].classList.add("active");
+        }
+
+        function currentSlide(n) {
+            clearInterval(slideInterval); 
+            showSlides(slideIndex = n);
+            startAutoSlide(); 
+        }
+
+        function startAutoSlide() {
+            slideInterval = setInterval(function() {
+                slideIndex++;
+                showSlides(slideIndex);
+            }, 5000); 
+        }
+
+        showSlides(slideIndex);
+        startAutoSlide();
+
+        // TOUCH SWIPE LOGIC FOR CAROUSEL
+        const swipeContainer = document.getElementById('swipe-container');
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        swipeContainer.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        swipeContainer.addEventListener('touchmove', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        swipeContainer.addEventListener('touchend', function(e) {
+            if (touchEndX === 0) return; 
+            handleSwipe();
+            touchEndX = 0; 
+        });
+
+        function handleSwipe() {
+            const threshold = 50; 
+            
+            if (touchEndX < touchStartX - threshold) {
+                clearInterval(slideInterval);
+                slideIndex++;
+                showSlides(slideIndex);
+                startAutoSlide();
+            }
+            if (touchEndX > touchStartX + threshold) {
+                clearInterval(slideInterval);
+                slideIndex--;
+                showSlides(slideIndex);
+                startAutoSlide();
+            }
+        }
+    </script>
 </body>
 </html>
-
-
-
-
