@@ -34,7 +34,6 @@
             overflow-x: hidden;
             line-height: 1.6;
         }
-
         
         #loader-splash {
             position: fixed;
@@ -178,7 +177,6 @@
             90% { width: 100%; opacity: 1; }
             100% { width: 100%; opacity: 0; } 
         }
-
     
         header {
             position: fixed;
@@ -245,7 +243,7 @@
             align-items: center;
         }
 
-        .nav-links a {
+        .nav-links a:not(.btn-download):not(.btn-blue) {
             color: var(--text-muted);
             text-decoration: none;
             font-size: 0.95rem;
@@ -254,7 +252,7 @@
             cursor: pointer;
         }
 
-        .nav-links a:hover { color: var(--text-main); }
+        .nav-links a:not(.btn-download):not(.btn-blue):hover { color: var(--text-main); }
 
         .btn-download {
             display: inline-block;
@@ -273,6 +271,21 @@
             box-shadow: 0 0 15px var(--accent-glow);
         }
 
+        .btn-blue {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--text-main) !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-blue:hover {
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+        }
         
         .mobile-nav-overlay {
             position: fixed;
@@ -297,9 +310,8 @@
         .mobile-nav-overlay.active { opacity: 1; visibility: visible; }
         .mobile-nav-overlay a { color: var(--text-main); font-size: 1.8rem; font-weight: 600; text-decoration: none; transition: color 0.3s, transform 0.3s; cursor: pointer; }
         .mobile-nav-overlay a:hover { color: var(--accent); transform: scale(1.1); }
-        .mobile-nav-overlay .btn-download { margin-top: 1rem; font-size: 1.3rem; padding: 0.8rem 2.5rem; }
+        .mobile-nav-overlay .btn-download, .mobile-nav-overlay .btn-blue { margin-top: 1rem; font-size: 1.3rem; padding: 0.8rem 2.5rem; }
 
-        
         .modal-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -386,7 +398,6 @@
             transform: translateY(-2px);
             box-shadow: 0 0 25px var(--accent-glow);
         }
-
         
         section {
             min-height: auto;
@@ -396,7 +407,6 @@
             padding: 6rem 10%;
             position: relative;
         }
-
         
         .hero {
             text-align: center;
@@ -443,7 +453,6 @@
             max-width: 750px;
             margin-bottom: 3rem;
         }
-
        
         .showcase {
             display: flex;
@@ -481,7 +490,6 @@
             opacity: 0.35;
             z-index: -1;
         }
-
        
         .showcase-visual img {
             width: 100%;
@@ -492,7 +500,6 @@
             position: relative;
             z-index: 1; 
         }
-
        
         .how-it-works {
             text-align: center;
@@ -508,7 +515,6 @@
         .step-number { font-size: 6rem; font-weight: 900; color: rgba(99, 160, 255, 0.4); position: absolute; top: -50px; left: -15px; z-index: 0; }
         .step-card h3 { font-size: 1.5rem; margin-bottom: 1rem; position: relative; z-index: 1; }
         .step-card p { color: var(--text-muted); position: relative; z-index: 1; }
-
      
         .feature-carousel-section {
             text-align: center;
@@ -577,7 +583,6 @@
         }
 
         .dot.active, .dot:hover { background-color: var(--accent); transform: scale(1.4); }
-
         
         .audience-section { padding: 8rem 10%; text-align: center; }
         .audience-section h2 { font-size: 2.8rem; margin-bottom: 3rem; }
@@ -596,7 +601,6 @@
 
         .audience-card h3 { font-size: 1.3rem; margin-bottom: 1rem; color: var(--text-main); }
         .audience-card p { color: var(--text-muted); font-size: 1rem; }
-
         
         .marquee-section { padding: 6rem 0; text-align: center; overflow: hidden; background: var(--bg-surface); }
         .marquee-section h2 { font-size: 2.8rem; margin-bottom: 1.5rem; }
@@ -629,7 +633,6 @@
         .marquee-card h3 { color: var(--text-main); font-size: 1.2rem; margin: 0; }
 
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
        
         .faq-section { padding: 8rem 10%; max-width: 900px; margin: 0 auto; }
         .faq-section h2 { text-align: center; font-size: 2.8rem; margin-bottom: 3rem; }
@@ -639,7 +642,6 @@
         summary::after { content: '+'; color: var(--accent); font-size: 1.5rem; }
         details[open] summary::after { content: '-'; }
         details p { padding: 0 1.5rem 1.5rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 1rem; padding-top: 1rem; }
-
         
         .about-section { padding: 8rem 10%; text-align: center; background: radial-gradient(circle at top, rgba(19, 91, 236, 0.05) 0%, var(--bg-deep) 70%); border-top: 1px solid rgba(255, 255, 255, 0.05); }
         .about-section h2 { font-size: 2.8rem; margin-bottom: 2rem; }
@@ -658,7 +660,6 @@
         .dev-profile:hover { transform: translateY(-5px); border-color: var(--accent); }
         .dev-profile h4 { color: var(--text-main); font-size: 1.3rem; margin-bottom: 0.5rem; }
         .dev-profile span { color: var(--accent); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-
         
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -744,7 +745,7 @@
 
         <nav class="nav-links">
             <a href="#about">About</a>
-            <a href="Documentation.pdf" target="_blank">Learn Unilang</a>
+            <a href="unilang.html" target="_blank" class="btn-blue">Get Unilang</a>
             <a href="#donate" class="donate-trigger">Donate</a>
             <a href="download.html" class="btn-download">Download Now</a>
         </nav>
@@ -752,7 +753,7 @@
 
     <div class="mobile-nav-overlay" id="mobile-nav">
         <a href="#about" class="mobile-link">About</a>
-        <a href="Documentation.pdf" target="_blank" class="mobile-link">Learn Unilang</a>
+        <a href="Documentation.pdf" target="_blank" class="mobile-link btn-blue">Get Unilang</a>
         <a href="#donate" class="mobile-link donate-trigger">Donate</a>
         <a href="download.html" class="mobile-link btn-download">Download Free</a>
     </div>
@@ -761,7 +762,7 @@
         <img src="logo.png" alt="ScriptPorter Engine" class="hero-logo" onerror="this.style.display='none'">
         
         <div class="hero-badge">THE ULTIMATE TRANSPILER</div>
-        <h1>Logic First.<br>Code Second.</h1>
+        <h1>Logic First.<br>Code Next.</h1>
         <p>ScriptPorter is a multi-language transpiler, that works completely offline. It defines Unilang, a programming language with an easy to learn syntax. Write your application logic once in Unilang and instantly generate production-ready code for 10 different programming environments.</p>
 
         <div style="margin-top: 2rem;">
@@ -771,7 +772,7 @@
 
     <section class="showcase reverse reveal">
         <div class="showcase-content">
-            <h2>The Power of Unilang</h2>
+            <h2>The Power of ScriptPorter Unilang</h2>
             <p>Unilang is a clean, easy-to-read programming language designed specifically for expressing pure logic and algorithms,making it exceptionally easy to learn and understand. Rather than running as an executable program on its own, it acts as a universal blueprint for your software's core rules.
 By drafting your ideas in Unilang's straightforward, pseudocode-like format, you can focus entirely on problem-solving and structuring data without getting distracted by complex formatting rules. 
 Once your blueprint is complete, the ScriptPorter engine simply reads it and translates your concepts into the exact, ready-to-use code in the target language
@@ -816,7 +817,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
 
     <section class="feature-carousel-section reveal">
         <h2>Engineered for Excellence</h2>
-        
         
         <div class="carousel-container" id="swipe-container">
             <div class="carousel-slide active">
@@ -980,7 +980,7 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
         
         <details>
             <summary>Is Unilang an executable programming language?</summary>
-            <p>No. Unilang is a Domain-Specific Language (DSL) built purely as an intermediate step. It acts as a universal logic blueprint. You draft your algorithm in Unilang, and then use ScriptPorter to generate the actual executable code for your target environment.</p>
+            <p>In this transpiler, Unilang is a Domain-Specific Language (DSL) built purely as an intermediate step. It acts as a universal logic blueprint. You draft your algorithm in Unilang, and then use ScriptPorter to generate the actual executable code for your target environment. However you can download and use Unilang programming langauge from our website (Click 'Get Unilang').</p>
         </details>
         
         <details>
@@ -1003,6 +1003,7 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
 
     <footer>
         <div class="social-links">
+            
             <a href="mailto:scriptporter@gmail.com" title="Gmail" target="_blank" class="social-link-item">
                 <svg class="social-icon" viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 18H4V8L12 13L20 8V18ZM12 11L4 6H20L12 11Z"/></svg>
                 <span>scriptporter@gmail.com</span>
@@ -1019,10 +1020,7 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
                 <svg class="social-icon" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 <span>ScriptPorter</span>
             </a>
-            <a href="https://github.com/ScriptPorter/website" title="GitHub" target="_blank" class="social-link-item">
-                <svg class="social-icon" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-                <span>ScriptPorter</span>
-            </a>
+
         </div>
         <p>copyright &copy; 2026 ScriptPorter
     </footer>
@@ -1047,7 +1045,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
             }
 
             setTimeout(hideSplash, 2500);
-
          
             const menuBtn = document.getElementById('mobile-menu-btn');
             const mobileNav = document.getElementById('mobile-nav');
@@ -1063,7 +1060,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
                     document.body.classList.remove('menu-open');
                 }
             });
-
            
             mobileLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -1075,7 +1071,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
                     }
                 });
             });
-
           
             const donateTriggers = document.querySelectorAll('.donate-trigger');
             const donateModal = document.getElementById('donate-modal');
@@ -1086,7 +1081,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
                 e.preventDefault();
                 donateModal.classList.add('active');
                 document.body.classList.add('modal-open');
-
             
                 if(mobileNav.classList.contains('active')) {
                     menuBtn.classList.remove('active');
@@ -1106,7 +1100,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
 
             closeModalBtn.addEventListener('click', closeModal);
             proceedDonateBtn.addEventListener('click', closeModal);
-
          
             donateModal.addEventListener('click', (e) => {
                 if (e.target === donateModal) {
@@ -1114,7 +1107,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
                 }
             });
         });
-
        
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
@@ -1129,7 +1121,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
         }
         window.addEventListener("scroll", reveal);
         reveal(); 
-
     
         let slideIndex = 1;
         let slideInterval;
@@ -1161,7 +1152,6 @@ Once your blueprint is complete, the ScriptPorter engine simply reads it and tra
 
         showSlides(slideIndex);
         startAutoSlide();
-
     
         const swipeContainer = document.getElementById('swipe-container');
         let touchStartX = 0;
