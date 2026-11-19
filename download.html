@@ -34,7 +34,6 @@
             min-height: 100vh;
         }
 
-       
         header {
             position: fixed;
             top: 0;
@@ -70,6 +69,7 @@
             font-size: 0.95rem;
             font-weight: 500;
             transition: color 0.3s;
+            cursor: pointer;
         }
 
         .nav-links a:hover {
@@ -87,7 +87,6 @@
             position: relative;
         }
 
-      
         .download-header {
             text-align: center;
             margin-bottom: 4rem;
@@ -120,7 +119,6 @@
             margin-bottom: 1.5rem;
         }
 
-    
         .btn-massive {
             display: inline-flex;
             align-items: center;
@@ -157,7 +155,6 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-     
         .sys-req-card {
             background: var(--bg-surface);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -214,7 +211,6 @@
             font-size: 1.05rem;
         }
 
-     
         footer {
             text-align: center;
             padding: 3rem 2rem;
@@ -222,6 +218,108 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             background: var(--bg-surface);
             width: 100%;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 8, 15, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #141a26;
+            border-radius: 16px;
+            padding: 3rem 2.5rem;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .modal-content h2 {
+            font-size: 1.7rem;
+            margin-bottom: 1.2rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .modal-content p {
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .modal-content strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .btn-modal-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-modal-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-modal-primary {
+            background: #1b5cfc;
+            border: none;
+            color: #ffffff;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(27, 92, 252, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-modal-primary:hover {
+            background: #2b6cff;
+            box-shadow: 0 0 30px rgba(27, 92, 252, 0.6);
+            transform: translateY(-2px);
         }
 
         @keyframes fadeInDown {
@@ -238,6 +336,8 @@
             .req-grid { grid-template-columns: 1fr; }
             .download-header h1 { font-size: 3rem; }
             .nav-links { display: none; }
+            .modal-actions { flex-direction: column; gap: 1rem; }
+            .btn-modal-outline, .btn-modal-primary { width: 100%; }
         }
     </style>
 </head>
@@ -248,7 +348,7 @@
         <nav class="nav-links">
             <a href="index.html">Home</a>
             <a href="Documentation.pdf" target="_blank">Learn Unilang</a>
-            <a href="index.html#donate">Donate</a>
+            <a id="donate-trigger">Donate</a>
         </nav>
     </header>
 
@@ -258,13 +358,28 @@
             <h1>Download ScriptPorter</h1>
             
             <div style="margin-top: 3rem;">
-                <a href="ScriptPorter_setup_x64.exe" class="btn-massive" download>
+                <a href="https://apps.microsoft.com/detail/9nqgkxwmgkd5?hl=en-US&gl=IN" class="btn-massive" download>
                     <svg viewBox="0 0 24 24">
+                        <path d="M0 3.449L9.75 2.1v9.408H0V3.45zM10.682 1.965L24 0v11.508H10.682V1.965zM0 12.492h9.75v9.408L0 20.551v-8.06zM10.682 12.492H24V24l-13.318-1.835v-9.673z"/>
+                    </svg>
+                    Get it on Microsoft Store
+                </a>
+
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <a href="ScriptPorter_setup_x64.exe" class="btn-massive" download>
+                     <svg viewBox="0 0 24 24">
                         <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                     </svg>
-                    Download for Windows
+                    Download for Windows (.exe)
                 </a>
+
             </div>
+            
+
+        
+            
         </div>
 
         <div class="sys-req-card">
@@ -321,8 +436,41 @@
     </main>
 
     <footer>
-        <p>copyright &copy; 2026 ScriptPorter
+        <p>copyright &copy; 2026 ScriptPorter</p>
     </footer>
+
+    <div id="donate-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">❤️</div>
+            <h2>Thank you for your generosity!</h2>
+            <p>ScriptPorter is 100% free and we do not accept<br>donations for ourselves.</p>
+            <p>However, if you would like to support a great cause, we<br>encourage you to donate to the <strong>International Rescue<br>Committee (IRC)</strong> to help families affected by crises<br>around the world.</p>
+            <div class="modal-actions">
+                <button id="close-modal" class="btn-modal-outline">Maybe Later</button>
+                <a href="https://www.rescue.org/" target="_blank" class="btn-modal-primary">Proceed to IRC</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const donateTrigger = document.getElementById('donate-trigger');
+        const donateModal = document.getElementById('donate-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        donateTrigger.addEventListener('click', () => {
+            donateModal.classList.add('active');
+        });
+
+        closeModal.addEventListener('click', () => {
+            donateModal.classList.remove('active');
+        });
+
+        donateModal.addEventListener('click', (e) => {
+            if (e.target === donateModal) {
+                donateModal.classList.remove('active');
+            }
+        });
+    </script>
 
 </body>
 </html>
