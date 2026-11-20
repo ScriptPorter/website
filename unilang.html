@@ -1,1 +1,759 @@
-<h1>Coming Soon...</h1>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptPorter Unilang</title>
+    <meta name="description" content="ScriptPorter Unilang is an ultra-concise, expressive standalone programming language and desktop IDE for Windows.">
+    <link rel="icon" type="image/x-icon" href="uni-icon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        uni: {
+                            black: '#05070F',
+                            dark: '#0B101E',
+                            panel: '#101622',
+                            header: '#1E2738',
+                            cyan: '#00D4FF',
+                            blue: '#135BEC',
+                            purple: '#A855F7',
+                            green: '#48BB78'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #05070F;
+            color: #E2E8F0;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 212, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 25%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(19, 91, 236, 0.07) 0%, transparent 50%);
+        }
+        .neon-border {
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.06);
+        }
+        .neon-border:hover {
+            border-color: rgba(0, 212, 255, 0.45);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.14);
+        }
+        .text-gradient {
+            background: linear-gradient(90deg, #00D4FF 0%, #3B82F6 50%, #A855F7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #00D4FF 0%, #135BEC 55%, #9333EA 100%);
+            transition: all 0.25s ease;
+        }
+        .btn-gradient:hover {
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.45);
+            transform: translateY(-1px);
+        }
+        .irc-btn-glow {
+            box-shadow: 0 0 22px rgba(29, 108, 255, 0.45);
+        }
+        .irc-btn-glow:hover {
+            box-shadow: 0 0 28px rgba(29, 108, 255, 0.7);
+        }
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #05070F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #page-loader.loader-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-logo-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-glow-ring {
+            position: absolute;
+            inset: -38px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                rgba(0, 212, 255, 0.9),
+                rgba(19, 91, 236, 0.85),
+                rgba(168, 85, 247, 0.9),
+                rgba(59, 130, 246, 0.85),
+                rgba(0, 212, 255, 0.9)
+            );
+            filter: blur(36px);
+            opacity: 0.1;
+            transform: scale(0.82) rotate(0deg);
+            animation:
+                uniGlowPulse 1.8s ease-in-out 2 forwards,
+                uniGlowSpin 3.6s linear 1 forwards;
+        }
+        .loader-logo-img {
+            position: relative;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            animation: uniLogoLight 1.8s ease-in-out 2 forwards;
+        }
+        @keyframes uniGlowPulse {
+            0%, 100% {
+                opacity: 0.1;
+                transform: scale(0.82);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.22);
+            }
+        }
+        @keyframes uniGlowSpin {
+            from {
+                rotate: 0deg;
+            }
+            to {
+                rotate: 360deg;
+            }
+        }
+        @keyframes uniLogoLight {
+            0%, 100% {
+                filter:
+                    drop-shadow(-6px 0 10px rgba(0, 212, 255, 0.12))
+                    drop-shadow(6px 0 10px rgba(168, 85, 247, 0.12));
+            }
+            50% {
+                filter:
+                    drop-shadow(-14px -6px 26px rgba(0, 212, 255, 0.85))
+                    drop-shadow(0 10px 30px rgba(19, 91, 236, 0.7))
+                    drop-shadow(14px -6px 28px rgba(168, 85, 247, 0.85));
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-uni-cyan selection:text-uni-black overflow-x-hidden">
+
+    <div id="page-loader" aria-label="Loading ScriptPorter Unilang">
+        <div class="loader-logo-wrap">
+            <div id="loader-glow-ring" class="loader-glow-ring"></div>
+            <img src="uni-logo.png" alt="ScriptPorter Unilang Logo" class="loader-logo-img">
+        </div>
+    </div>
+
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-uni-black/85 border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
+            
+            <div class="flex items-center gap-3">
+                <button
+                    id="mobile-menu-btn"
+                    type="button"
+                    onclick="toggleMobileMenu()"
+                    aria-label="Toggle navigation menu"
+                    aria-expanded="false"
+                    aria-controls="mobile-menu"
+                    class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-800 bg-slate-900/80 text-slate-200 hover:border-uni-cyan/50 hover:text-uni-cyan transition"
+                >
+                    <svg id="icon-hamburger" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg id="icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                <a href="#" class="flex items-center gap-2.5 sm:gap-3.5 group">
+                    <img src="uni-icon.ico" alt="Unilang Icon" class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg shadow-lg shadow-uni-cyan/10 group-hover:scale-105 transition">
+                    <div class="flex flex-col leading-tight">
+                        <span class="text-[9px] sm:text-[10px] tracking-[0.25em] text-slate-400 font-semibold uppercase">ScriptPorter</span>
+                        <span class="font-display text-lg sm:text-xl font-bold tracking-wider text-white">uni<span class="text-uni-cyan">lang</span></span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#features" class="hover:text-uni-cyan transition">Features</a>
+                <a href="#playground" class="hover:text-uni-cyan transition">Examples</a>
+                <a href="Documentation.pdf" target="_blank" rel="noopener" class="hover:text-uni-cyan transition">Docs</a>
+                <button type="button" onclick="openDonateModal()" class="text-amber-400 hover:text-amber-300 transition cursor-pointer">Donate</button>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="https://www.scriptporter.com" class="hidden sm:inline-flex px-4 py-2 rounded-lg text-sm font-medium text-slate-300 border border-slate-800 hover:border-uni-cyan/40 hover:text-white hover:bg-slate-800/60 transition">
+                    Get ScriptPorter
+                </a>
+            </div>
+        </div>
+
+        <nav id="mobile-menu" class="hidden md:hidden border-t border-slate-800/80 bg-uni-black/95 backdrop-blur-lg">
+            <div class="px-4 py-4 flex flex-col gap-1 text-sm font-medium text-slate-200">
+                <a href="#features" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg hover:bg-slate-800/70 hover:text-uni-cyan transition">Features</a>
+                <a href="#playground" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg hover:bg-slate-800/70 hover:text-uni-cyan transition">Examples</a>
+                <a href="Documentation.pdf" target="_blank" rel="noopener" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg hover:bg-slate-800/70 hover:text-uni-cyan transition">Docs</a>
+                <button type="button" onclick="closeMobileMenu(); openDonateModal();" class="text-left px-3 py-2.5 rounded-lg text-amber-400 hover:bg-slate-800/70 hover:text-amber-300 transition">Donate</button>
+                <div class="pt-2 mt-2 border-t border-slate-800/80">
+                    <a href="https://www.scriptporter.com" onclick="closeMobileMenu()" class="block text-center px-4 py-2.5 rounded-lg text-sm font-medium text-white border border-slate-700 bg-slate-900 hover:border-uni-cyan/50 transition">
+                        Get ScriptPorter
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="relative pt-12 pb-20 md:pt-24 md:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-uni-cyan/30 text-xs font-medium text-uni-cyan">
+                    <span class="w-2 h-2 rounded-full bg-uni-cyan animate-pulse shrink-0"></span>
+                    <span>ScriptPorter Unilang v1.0.0 — Standalone Release</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
+                    Code at the Speed of <span class="text-gradient">Thought.</span>
+                </h1>
+
+                <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                    Born from the ScriptPorter project, <strong class="text-slate-200">Unilang</strong> is now a standalone, executable programming language. Write ultra-clean symbolic syntax (<code class="text-uni-cyan font-mono">-&gt;</code>, <code class="text-uni-cyan font-mono">&lt;-</code>, <code class="text-uni-purple font-mono">?()</code>, <code class="text-uni-purple font-mono">...</code>) and run <code class="text-slate-200 font-mono">.unilang</code> programs natively on Windows.
+                </p>
+
+                <div class="pt-2 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center lg:justify-start gap-3.5 sm:gap-4">
+                    <a href="https://apps.microsoft.com/detail/9n3rmtjzfl35?hl=en-US&gl=IN" target="_blank" rel="noopener" class="btn-gradient px-6 sm:px-7 py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-3 shadow-xl">
+                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M2 3h9v9H2V3zm11 0h9v9h-9V3zM2 14h9v9H2v-9zm11 0h9v9h-9v-9z"/>
+                        </svg>
+                        <span>Get it on Microsoft Store</span>
+                    </a>
+                    <a href="Documentation.pdf" target="_blank" rel="noopener" class="px-6 py-4 rounded-xl font-semibold text-slate-200 bg-slate-900/90 border border-slate-700 hover:border-uni-cyan/50 hover:text-white transition flex items-center justify-center gap-2">
+                        <span>Read Documentation</span>
+                        <svg class="w-4 h-4 text-uni-cyan shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+
+                <div class="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5 text-xs text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <span class="text-uni-cyan">✔</span> Windows 10 / 11
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-uni-cyan">✔</span> Self-Contained Runtime (Zero Dependencies)
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-uni-cyan">✔</span> Direct <code class="text-slate-300 font-mono">.unilang</code> File Association
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="relative group w-full max-w-sm sm:max-w-md">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-uni-cyan via-uni-blue to-uni-purple rounded-3xl blur-xl opacity-30 group-hover:opacity-55 transition duration-500"></div>
+                    <div class="relative bg-black rounded-3xl p-6 sm:p-8 border border-slate-800/90 flex flex-col items-center shadow-2xl">
+                        <img src="uni-logo.png" alt="ScriptPorter Unilang Official Logo" class="w-48 h-48 sm:w-64 sm:h-64 object-contain rounded-xl mb-4">
+                        <div class="w-full pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-mono">
+                            <span>ext: <strong class="text-uni-cyan">.unilang</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="features" class="py-16 sm:py-20 border-t border-slate-900 bg-uni-dark/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+                <span class="text-xs font-semibold uppercase tracking-widest text-uni-cyan">Why Unilang?</span>
+                <h2 class="mt-2 text-2xl sm:text-4xl font-bold text-white">Minimalist Symbols. Maximum Expressiveness.</h2>
+                <p class="mt-3 text-sm sm:text-base text-slate-400">Designed to eliminate boilerplate and make logic crystal-clear with intuitive, lightweight symbolic constructs.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <div class="bg-uni-panel/90 rounded-2xl p-6 neon-border transition">
+                    <div class="w-11 h-11 rounded-xl bg-uni-cyan/10 border border-uni-cyan/30 flex items-center justify-center text-uni-cyan font-mono font-bold text-lg mb-4">
+                        -&gt;
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Arrow I/O Operations</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Print values effortlessly with <code class="text-uni-cyan font-mono">-&gt;"Hello"</code> and capture typed console input directly using <code class="text-uni-cyan font-mono">&lt;-(0)</code> for integers, <code class="text-uni-cyan font-mono">&lt;-(0.0)</code> for decimals, and <code class="text-uni-cyan font-mono">&lt;-(" ")</code> for strings.
+                    </p>
+                </div>
+
+                <div class="bg-uni-panel/90 rounded-2xl p-6 neon-border transition">
+                    <div class="w-11 h-11 rounded-xl bg-uni-purple/10 border border-uni-purple/30 flex items-center justify-center text-uni-purple font-mono font-bold text-lg mb-4">
+                        ?()
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Symbolic Conditionals</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Replace verbose branching keywords with clean operators: <code class="text-uni-purple font-mono">?()</code> for if, <code class="text-uni-purple font-mono">??()</code> for else-if, and <code class="text-uni-purple font-mono">$()</code> for else blocks.
+                    </p>
+                </div>
+
+                <div class="bg-uni-panel/90 rounded-2xl p-6 neon-border transition">
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-mono font-bold text-lg mb-4">
+                        ...
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Unified Loop Construct</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Write while loops, count loops, and custom step loops using a single unified ellipsis syntax: <code class="text-blue-400 font-mono">(i=1, 10, 1)... { }</code>.
+                    </p>
+                </div>
+
+                <div class="bg-uni-panel/90 rounded-2xl p-6 neon-border transition">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-mono font-bold text-sm mb-4">
+                        &lt;-{}
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Clean Functions &amp; Constants</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Define functions concisely with <code class="text-emerald-400 font-mono">sum&lt;-{ -&gt;a+b }&lt;-a,b</code>, call with <code class="text-emerald-400 font-mono">(sum:5,10)</code>, and declare constants with <code class="text-emerald-400 font-mono">fix</code>.
+                    </p>
+                </div>
+
+                <div class="bg-uni-panel/90 rounded-2xl p-6 neon-border transition">
+                    <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-mono font-bold text-lg mb-4">
+                        F5
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Interactive Desktop Environment</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Includes <strong class="text-slate-200">ScriptPorter Unilang</strong>—desktop environment with one-click execution, inline console input, and instant termination controls.
+                    </p>
+                </div>
+
+                <div class="bg-uni-panel/90 rounded-2xl p-6 neon-border transition">
+                    <div class="w-11 h-11 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 font-mono font-bold text-sm mb-4">
+                        .exe
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Native Windows Integration</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        The Windows installer registers <code class="text-pink-400 font-mono">.unilang</code> file associations automatically—double-click any script in File Explorer to open and run it directly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="playground" class="py-16 sm:py-20 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 sm:mb-10 gap-5">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-widest text-uni-cyan">Live Code Tour</span>
+                    <h2 class="mt-2 text-2xl sm:text-4xl font-bold text-white">Simple <code class="text-uni-cyan font-mono">.unilang</code> Examples</h2>
+                </div>
+                <div class="flex flex-wrap gap-2" id="example-tabs">
+                    <button onclick="showExample('io')" id="tab-io" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-uni-blue text-white transition">1. Input &amp; Output</button>
+                    <button onclick="showExample('conditionals')" id="tab-conditionals" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">2. Conditionals</button>
+                    <button onclick="showExample('whileloop')" id="tab-whileloop" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">3. While Loop</button>
+                    <button onclick="showExample('forloop')" id="tab-forloop" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">4. For Loop</button>
+                    <button onclick="showExample('functions')" id="tab-functions" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">5. Functions</button>
+                    <button onclick="showExample('class')" id="tab-class" class="px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">6. Class</button>
+                </div>
+            </div>
+
+            <div class="rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-uni-panel">
+                <div class="bg-[#2D3748] px-3 sm:px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-900">
+                    <div class="flex items-center gap-2.5 sm:gap-3">
+                        <img src="uni-icon.ico" alt="Icon" class="w-5 h-5 rounded">
+                        <span class="text-xs font-semibold text-slate-200">ScriptPorter Unilang</span>
+                        <span class="text-xs text-slate-400 font-mono hidden sm:inline">— example.unilang</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="runCurrentExample()" class="bg-[#2F855A] hover:bg-[#38A169] text-white text-xs font-semibold px-3 sm:px-3.5 py-1.5 rounded transition flex items-center gap-1.5">
+                            <span>▶ Run (F5)</span>
+                        </button>
+                        <span class="hidden xs:inline-block sm:inline-block bg-[#3A4252] text-[#718096] text-xs font-semibold px-3 py-1.5 rounded select-none">⏹ Terminate</span>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
+                    <div class="min-w-0">
+                        <div class="bg-[#242D3C] px-4 py-2 text-xs font-semibold text-slate-300 flex items-center gap-2 border-b border-slate-800">
+                            <span class="text-uni-blue">✎</span> Unilang Source (.unilang)
+                        </div>
+                        <pre id="code-display" class="p-4 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-slate-200 min-h-[220px] sm:min-h-[260px]"></pre>
+                    </div>
+
+                    <div class="bg-[#0D121C] flex flex-col min-w-0">
+                        <div class="bg-[#242D3C] px-4 py-2 text-xs font-semibold text-slate-300 flex items-center justify-between border-b border-slate-800">
+                            <div class="flex items-center gap-2">
+                                <span class="text-uni-green">▶</span> Interactive Console
+                            </div>
+                            <span class="text-[11px] text-slate-400 font-mono">Unilang Runtime</span>
+                        </div>
+                        <pre id="console-display" class="p-4 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed text-uni-green overflow-x-auto flex-1 min-h-[200px] sm:min-h-[260px]"></pre>
+                    </div>
+                </div>
+
+                <div id="status-bar" class="bg-uni-blue px-4 py-1.5 text-xs font-medium text-white flex flex-wrap items-center justify-between gap-2">
+                    <span id="status-text">Execution finished successfully in 8 ms.</span>
+                    <span class="font-mono text-[11px] opacity-90">UTF-8 | Unilang v1.0.0</span>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <a href="Sample.pdf" target="_blank" rel="noopener" class="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-semibold text-sm text-uni-cyan bg-slate-900/90 border border-uni-cyan/30 hover:border-uni-cyan hover:bg-uni-cyan/10 transition shadow-lg">
+                    <span>Explore More Examples</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="py-16 sm:py-24 border-t border-slate-900 bg-uni-dark/30">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="relative rounded-3xl p-6 sm:p-12 bg-gradient-to-b from-slate-900 to-uni-panel border border-uni-cyan/30 shadow-2xl overflow-hidden">
+                <div class="grid md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-7 lg:col-span-8 space-y-4 text-center md:text-left">
+                        <h2 class="text-2xl sm:text-4xl font-extrabold text-white">
+                            Get ScriptPorter Unilang v1.0
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Includes the standalone <strong class="text-white">ScriptPorter Unilang</strong> desktop Editor, the <strong class="text-white">Unilang execution engine</strong> and sample <code class="text-uni-cyan font-mono">.unilang</code> programs.
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-5 lg:col-span-4 flex flex-col items-center justify-center bg-black/60 p-6 rounded-2xl border border-slate-800 text-center">
+                        <img src="uni-icon.ico" alt="Unilang Installer Icon" class="w-16 h-16 mb-4">
+                        <div class="text-sm font-bold text-white">ScriptPorter Unilang</div>
+                        <div class="text-xs text-slate-400 mb-5">Version 1.0.0 • Windows x64</div>
+                        <a href="https://apps.microsoft.com/detail/9n3rmtjzfl35?hl=en-US&gl=IN" target="_blank" rel="noopener" class="w-full btn-gradient py-3.5 px-4 rounded-xl font-semibold text-sm text-white shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M2 3h9v9H2V3zm11 0h9v9h-9V3zM2 14h9v9H2v-9zm11 0h9v9h-9v-9z"/>
+                            </svg>
+                            <span>Get it on Microsoft Store</span>
+                        </a>
+                        <a href="Documentation.pdf" target="_blank" rel="noopener" class="mt-3 text-xs text-uni-cyan hover:underline">
+                            Download Documentation (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-slate-900 bg-black py-10 sm:py-12 text-sm text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <img src="uni-icon.ico" alt="Unilang" class="w-7 h-7 rounded">
+                <div>
+                    <div class="text-white font-semibold">ScriptPorter Unilang</div>
+                    <div class="text-xs text-slate-500">Copyright © 2026 ScriptPorter</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs">
+                <a href="https://www.scriptporter.com" class="hover:text-uni-cyan transition">Get ScriptPorter</a>
+                <a href="Documentation.pdf" target="_blank" rel="noopener" class="hover:text-uni-cyan transition">Documentation</a>
+                <a href="Sample.pdf" target="_blank" rel="noopener" class="hover:text-uni-cyan transition">Sample Programs</a>
+                <a href="mailto:scriptporter@gmail.com" class="hover:text-uni-cyan transition">Contact</a>
+                <button type="button" onclick="openDonateModal()" class="text-amber-400 hover:text-amber-300 font-medium transition cursor-pointer">Donate</button>
+
+                <div class="flex items-center gap-4 pl-2 border-l border-slate-800">
+                    <a href="https://www.youtube.com/@ScriptPorter" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube" class="text-slate-400 hover:text-red-500 transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+
+                    <a href="https://x.com/ScriptPorter" target="_blank" rel="noopener" aria-label="X" title="X (@ScriptPorter)" class="text-slate-400 hover:text-white transition">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+
+                    <a href="https://www.instagram.com/scriptporter" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram" class="text-slate-400 hover:text-pink-400 transition">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div
+        id="donate-modal"
+        class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="donate-modal-title"
+        onclick="handleModalBackdropClick(event)"
+    >
+        <div class="w-full max-w-md rounded-2xl bg-[#0F131F] border border-slate-800/90 p-7 sm:p-9 text-center shadow-2xl">
+            <div class="flex justify-center mb-5">
+                <svg class="w-12 h-12" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                    <path d="M16 28.5C16 28.5 4 20.6 4 11.8C4 7.7 7.1 4.5 11 4.5C13.3 4.5 15.3 5.7 16 7.5C16.7 5.7 18.7 4.5 21 4.5C24.9 4.5 28 7.7 28 11.8C28 20.6 16 28.5 16 28.5Z" fill="#EF233C" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M9.5 9.2C8.4 10.2 8 11.7 8.4 13.2" stroke="#FF8FA3" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <h3 id="donate-modal-title" class="text-2xl sm:text-[26px] font-extrabold text-white tracking-tight mb-4">
+                Thank you for your generosity!
+            </h3>
+
+            <p class="text-sm sm:text-[15px] text-slate-300 leading-relaxed mb-5">
+                ScriptPorter is 100% free and we do not accept donations for ourselves.
+            </p>
+
+            <p class="text-sm sm:text-[15px] text-slate-300 leading-relaxed mb-8">
+                However, if you would like to support a great cause, we encourage you to donate to the <strong class="text-white font-semibold">International Rescue Committee (IRC)</strong> to help families affected by crises around the world.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                <button
+                    type="button"
+                    onclick="closeDonateModal()"
+                    class="w-full sm:w-auto px-7 py-3 rounded-full text-sm font-semibold text-white bg-transparent border border-slate-700 hover:border-slate-500 hover:bg-slate-800/60 transition cursor-pointer"
+                >
+                    Maybe Later
+                </button>
+                <a
+                    href="https://www.rescue.org/"
+                    target="_blank"
+                    rel="noopener"
+                    onclick="closeDonateModal()"
+                    class="w-full sm:w-auto px-7 py-3 rounded-full text-sm font-semibold text-white bg-[#1D6CFF] hover:bg-[#317BFF] irc-btn-glow transition text-center"
+                >
+                    Proceed to IRC
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const examples = {
+            io: {
+                code: `// Read two numbers and print their sum
+->"Enter two numbers:"
+a <- (0)
+b <- (0)
+->"Sum =", a + b`,
+                output: `Enter two numbers:
+25
+17
+Sum = 42`
+            },
+            conditionals: {
+                code: `// Check if a number is positive, negative, or zero
+->"Enter a number:"
+num <- (0)
+
+?(num > 0)
+{
+    ->"Positive number"
+}
+??(num < 0)
+{
+    ->"Negative number"
+}
+$()
+{
+    ->"The number is Zero"
+}`,
+                output: `Enter a number:
+12
+Positive number`
+            },
+            whileloop: {
+                code: `// While loop in Unilang
+i = 1
+(i <= 5)...
+{
+    ->i
+    i = i + 1
+}`,
+                output: `1
+2
+3
+4
+5`
+            },
+            forloop: {
+                code: `// For loop in Unilang (start, end, step)
+(i = 1, 6, 1)...
+{
+    ->i
+}`,
+                output: `1
+2
+3
+4
+5`
+            },
+            functions: {
+                code: `//function for finding sum of two numbers
+
+sum<-{
+
+      ->a+b
+
+   }<-a,b
+
+
+(sum:5,10)`,
+                output: `15`
+            },
+            class: {
+                code: `//Creating class named 'Person'
+
+Person<-[
+
+    Name="NA"
+    Age=0
+
+
+    Display<-{
+
+        ->"Name:",this.Name
+        ->"Age:",this.Age
+    }
+
+]
+
+
+//creating object of class 'Person'
+p=Person()
+
+//Modifying class properties
+p.Name="ScriptPorter"
+p.Age=1
+
+//Calling class method
+p.(Display)`,
+                output: `Name: ScriptPorter
+Age: 1`
+            }
+        };
+
+        let currentKey = 'io';
+
+        function showExample(key) {
+            currentKey = key;
+            document.getElementById('code-display').textContent = examples[key].code;
+            document.getElementById('console-display').textContent = examples[key].output;
+            document.getElementById('status-text').textContent = 'Ready — Click Run (F5) to simulate execution.';
+
+            ['io', 'conditionals', 'whileloop', 'forloop', 'functions', 'class'].forEach(k => {
+                const btn = document.getElementById('tab-' + k);
+                if (k === key) {
+                    btn.className = 'px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-uni-blue text-white transition';
+                } else {
+                    btn.className = 'px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition';
+                }
+            });
+        }
+
+        function runCurrentExample() {
+            const consoleEl = document.getElementById('console-display');
+            const statusText = document.getElementById('status-text');
+            consoleEl.textContent = 'Running Unilang program...';
+            statusText.textContent = 'Executing Unilang program...';
+
+            setTimeout(() => {
+                consoleEl.textContent = examples[currentKey].output;
+                statusText.textContent = 'Execution finished successfully in 6 ms.';
+            }, 220);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('mobile-menu-btn');
+            const iconHamburger = document.getElementById('icon-hamburger');
+            const iconClose = document.getElementById('icon-close');
+            const isHidden = menu.classList.contains('hidden');
+
+            menu.classList.toggle('hidden');
+            iconHamburger.classList.toggle('hidden', isHidden);
+            iconClose.classList.toggle('hidden', !isHidden);
+            btn.setAttribute('aria-expanded', String(isHidden));
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('mobile-menu-btn');
+            const iconHamburger = document.getElementById('icon-hamburger');
+            const iconClose = document.getElementById('icon-close');
+
+            if (!menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                iconHamburger.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function openDonateModal() {
+            const modal = document.getElementById('donate-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDonateModal() {
+            const modal = document.getElementById('donate-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function handleModalBackdropClick(event) {
+            if (event.target.id === 'donate-modal') {
+                closeDonateModal();
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeDonateModal();
+                closeMobileMenu();
+            }
+        });
+
+        showExample('io');
+
+        (function () {
+            const loader = document.getElementById('page-loader');
+            const glowRing = document.getElementById('loader-glow-ring');
+            if (!loader) return;
+
+            document.body.style.overflow = 'hidden';
+
+            let dismissed = false;
+            function dismissLoader() {
+                if (dismissed) return;
+                dismissed = true;
+                loader.classList.add('loader-hidden');
+                document.body.style.overflow = '';
+                setTimeout(() => loader.remove(), 650);
+            }
+
+            if (glowRing) {
+                glowRing.addEventListener('animationend', (e) => {
+                    if (e.animationName === 'uniGlowPulse') {
+                        dismissLoader();
+                    }
+                });
+            }
+
+            setTimeout(dismissLoader, 3900);
+        })();
+    </script>
+</body>
+</html>
